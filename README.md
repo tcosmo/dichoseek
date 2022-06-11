@@ -2,6 +2,8 @@
 
 Dichoseek tests the membership of a n-byte encoded integer in a sorted binary file consisted of a succession of n-byte integers.
 
+The name comes from the fact that the algorithm is a dichotomy (binary search) using the file `seek` function.
+
 Assuming that you are looking for 4-byte unsigned integers (you can change this assumption):
 
 ### Using a path
