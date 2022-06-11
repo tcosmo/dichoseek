@@ -1,6 +1,6 @@
 # Dichoseek
 
-Dichoseek tests the membership of a n-byte encoded integer in a sorted binary file consisted of a succession of n-byte integers.
+Dichoseek tests the membership of a n-byte encoded integer in a sorted binary file consisting of a succession of n-byte integers.
 
 The name comes from the fact that the algorithm is a dichotomy (binary search) using the file `seek` function.
 
