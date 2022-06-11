@@ -52,18 +52,18 @@ def dichoseek(
     nb_blocks = file_size // block_size
     beg, end = 0, nb_blocks
 
-    while beg <= end:
+    while beg < end:
         middle = (beg + end) // 2
+        assert middle * block_size < file_size
         f.seek(middle * block_size)
         raw_bytes = f.read(block_size)
         corresponding_int = block_interpretation_function(raw_bytes)
-
         if corresponding_int == elem_to_find:
             if to_close:
                 f.close()
             return True
         elif corresponding_int > elem_to_find:
-            end = middle - 1
+            end = middle
         else:
             beg = middle + 1
 

@@ -98,10 +98,15 @@ class TestDichoseek(unittest.TestCase):
         finally:
             os.remove(path)
 
-    def test_several_size_one_and_two_cases(self):
+    def test_out_of_range(self):
+        l = [0, 1, 2]
+        _, path = write_binary_tmp_file(l, 4)
+        self.assertEqual(dichoseek(path, 3), False)
+
+    def test_several_size_one_and_two_and_three_cases(self):
         """Test the sepcial cases of lists with only 1 or 2 elements."""
         for _ in range(100):
-            nb_to_generate = random.randint(1, 2)
+            nb_to_generate = random.randint(1, 3)
             l = generate_ordered_list_of_int(nb_to_generate)
             _, path = write_binary_tmp_file(l, 4)
             not_in_l = generate_elems_not_in_sorted_l(1000, l)
