@@ -23,16 +23,7 @@ with open("path/to/file", "rb") as f:
 
 ## Other parameters
 
-- `block_size`: number of bytes per integer. We assume that the size of the file is a multiple of this `block_size`.
+- `block_size`: number of bytes per integer. We assume that the size of the file is a multiple of this `block_size`. Default is `4`.
 
-```python
-is_elem_in_file = dichoseek("path/to/file", elem, block_size = 4)
-```
+- `block_interpretation_function` is the function that is used to transform bytes into `int`. Default is unsigned, big-endian parsing: `lambda b: int.from_bytes(b, byteorder="big")`.
 
-- `block_interpretation_function` is the function that is used to transform bytes into `int`. Default is big-endian parsing: `lambda b: int.from_bytes(b, byteorder="big")`.
-
-```python
-is_elem_in_file = dichoseek("path/to/file", elem, 
-                            block_interpretation_function = 
-                            lambda b: int.from_bytes(b, byteorder="big")
-```
