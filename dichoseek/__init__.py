@@ -1,0 +1,1 @@
+from dichoseek.dichoseek import *
