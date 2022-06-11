@@ -4,9 +4,7 @@ Dichoseek tests the membership of a n-byte encoded integer in a sorted binary fi
 
 The name comes from the fact that the algorithm is a dichotomy (binary search) using the file `seek` function.
 
-Assuming that you are looking for 4-byte unsigned integers (you can change this assumption):
-
-### Using a path
+Assuming that you are looking for a 4-byte unsigned integer (you can change this assumption):
 
 ```python
 from dichoseek import dichoseek
@@ -14,7 +12,7 @@ elem = 124
 is_elem_in_file = dichoseek("path/to/file", elem)
 ```
 
-### Or a file object
+Or using a file object:
 
 ```python
 from dichoseek import dichoseek
@@ -25,15 +23,13 @@ with open("path/to/file", "rb") as f:
 
 ## Other parameters
 
-### Block size, default is 4 (number of bytes per number)
+- `block_size`: number of bytes per integer. We assume that the size of the file is a multiple of this `block_size`.
 
 ```python
 is_elem_in_file = dichoseek("path/to/file", elem, block_size = 4)
 ```
 
-### Block-interpreting function
-
-`block_interpretation_function` is the function that is used to transform bytes into `int`. Default is big-endian parsing: `lambda b: int.from_bytes(b, byteorder="big")`.
+- `block_interpretation_function` is the function that is used to transform bytes into `int`. Default is big-endian parsing: `lambda b: int.from_bytes(b, byteorder="big")`.
 
 ```python
 is_elem_in_file = dichoseek("path/to/file", elem, 
