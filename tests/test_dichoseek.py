@@ -5,7 +5,7 @@ import tempfile
 from typing import BinaryIO, List, Union
 from bisect import bisect_left
 import tqdm
-from dichoseek import dichoseek
+from dichoseek import dichoseek, dichoseek_index
 
 
 def generate_ordered_list_of_int(nb_to_generate, nb_bytes=4) -> List[int]:
@@ -50,9 +50,7 @@ def generate_elems_not_in_sorted_l(
     return to_return
 
 
-def get_random_block_from_file(
-    f: BinaryIO, nb_blocks: int, block_size: int
-) -> bytes:
+def get_random_block_from_file(f: BinaryIO, nb_blocks: int, block_size: int) -> bytes:
     random_block = random.randint(0, nb_blocks - 1)
     f.seek(random_block * block_size)
     return f.read(block_size)
@@ -142,9 +140,7 @@ class TestDichoseek(unittest.TestCase):
             with open(DECIDED_PATH, "rb") as f_decided:
                 for _ in range(100):
                     random_undecided = int.from_bytes(
-                        get_random_block_from_file(
-                            f_undecided, nb_undecided, 4
-                        ),
+                        get_random_block_from_file(f_undecided, nb_undecided, 4),
                         byteorder="big",
                     )
                     random_decided = int.from_bytes(
@@ -152,13 +148,54 @@ class TestDichoseek(unittest.TestCase):
                         byteorder="big",
                     )
 
-                    self.assertEqual(
-                        dichoseek(f_undecided, random_undecided), True
-                    )
-                    self.assertEqual(
-                        dichoseek(f_undecided, random_decided), False
-                    )
-                    self.assertEqual(
-                        dichoseek(f_decided, random_undecided), False
-                    )
+                    self.assertEqual(dichoseek(f_undecided, random_undecided), True)
+                    self.assertEqual(dichoseek(f_undecided, random_decided), False)
+                    self.assertEqual(dichoseek(f_decided, random_undecided), False)
                     self.assertEqual(dichoseek(f_decided, random_decided), True)
+
+    def test_bbchallenge_db_find_id(self):
+        """This test aims at getting the ID of an element in a sorted list.
+        We use bbchallenge DB for that, it is available here:
+        http://docs.bbchallenge.org/all_5_states_undecided_machines_with_global_header.zip
+        """
+        DB_PATH = "tests/test_files/all_5_states_undecided_machines_with_global_header"
+        END_TIME = 14322029
+        END_SPACE = 14322029 + 74342035
+
+        try:
+            with open(DB_PATH, "rb") as f_db:
+                for _ in tqdm.tqdm(range(1000)):
+                    machine_id = random.randint(0, END_TIME - 1)
+                    f_db.seek((machine_id + 1) * 30)
+                    machine = f_db.read(30)
+                    found_id = dichoseek_index(
+                        f_db,
+                        machine,
+                        block_size=30,
+                        block_interpretation_function=lambda x: x,
+                        begin_at_byte=30,
+                        end_at_byte=(END_TIME + 1) * 30,
+                    )
+                    self.assertEqual(machine_id, found_id)
+
+                for _ in tqdm.tqdm(range(1000)):
+                    machine_id = random.randint(END_TIME, END_SPACE)
+                    f_db.seek((machine_id + 1) * 30)
+                    machine = f_db.read(30)
+                    found_id = dichoseek_index(
+                        f_db,
+                        machine,
+                        block_size=30,
+                        block_interpretation_function=lambda x: x,
+                        begin_at_byte=30 + END_TIME * 30,
+                        end_at_byte=None,
+                    )
+                    self.assertEqual(machine_id, END_TIME + found_id)
+        except FileNotFoundError:
+            print("WARNING")
+            print("=======")
+            print("In order to run this test you need to download:")
+            print(
+                "http://docs.bbchallenge.org/all_5_states_undecided_machines_with_global_header.zip"
+            )
+            print("Then unzip and put in in tests/test_files")
