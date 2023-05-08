@@ -4,6 +4,12 @@ Dichoseek tests the membership of a n-byte encoded integer in a sorted binary fi
 
 The name comes from the fact that the algorithm is a dichotomy (binary search) using the file `seek` function.
 
+## Instal
+
+`pip install dichoseek`
+
+## Basic usage
+
 Assuming that you are looking for a 4-byte unsigned integer (you can change this assumption):
 
 ```python
