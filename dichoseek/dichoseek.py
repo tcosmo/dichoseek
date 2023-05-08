@@ -43,7 +43,7 @@ def dichoseek(
             begin_at_byte,
             end_at_byte,
         )
-        != -1
+        is not None
     )
 
 
@@ -69,9 +69,9 @@ def dichoseek_index(
     ),
     begin_at_byte: int = 0,
     end_at_byte: Union[int, None] = None,
-) -> int:
+) -> Union[int, None]:
     """
-    Returns -1 if the int `elem_to_find` is not present in the sorted binary file specified
+    Returns None if the int `elem_to_find` is not present in the sorted binary file specified
     by `filename_or_binary_file`. Otherwise, it returns an index where it is present.
     Implements a dichotomy using file `seek` operations.
 
@@ -138,4 +138,4 @@ def dichoseek_index(
 
     if to_close:
         f.close()
-    return -1
+    return None
